@@ -57,12 +57,13 @@ module PierLogging
       @enabled = false
     end
 
-    def user_info_getter(&block)
-      raise ArgumentError, "Config 'user_info_getter' must be a 'Proc'" unless block_given?
-      @user_info_getter = block
+    def user_info_getter=(proc)
+      raise ArgumentError, "Config 'user_info_getter' must be a 'Proc'" unless proc.is_a? Proc
+      @user_info_getter = proc
     end
     
     def enabled=(enabled = false)
+      raise ArgumentError, "Config 'enabled' must be a 'boolean'" unless !!enabled == enabled
       @enabled = enabled
     end
   end
