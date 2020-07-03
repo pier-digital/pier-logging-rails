@@ -88,11 +88,11 @@ module PierLogging
 
     def parse_body(body)
       if body.is_a? String # when string
-        JSON.parse(body, nil, allow_blank: true)
+        Oj.load(body, allow_blank: true)
       elsif body.is_a? Array # Grape body
-        JSON.parse(body.last, nil, allow_blank: true)
+        Oj.load(body.last, allow_blank: true)
       elsif body.is_a? ActionDispatch::Response::RackBody # Rails body
-        JSON.parse(body.body, nil, allow_blank: true)
+        Oj.load(body.body, allow_blank: true)
       else
         body
       end
