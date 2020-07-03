@@ -6,8 +6,8 @@ mkdir -p ~/.gem
 
 cat << EOF > ~/.gem/credentials
 ---
-:github: Bearer $GH_PERSONAL_ACCESS_TOKEN
-:rubygems_api_key: $RUBYGEMS_API_KEY
+:github: Bearer ${GH_PERSONAL_ACCESS_TOKEN}
+:rubygems_api_key: ${RUBYGEMS_API_KEY}
 
 EOF
 
