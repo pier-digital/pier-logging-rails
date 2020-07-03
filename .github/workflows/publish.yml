@@ -48,4 +48,4 @@ jobs:
       env:
         VERSION: ${{ steps.new_version.outputs.version }}
         RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-      run: ruby ./bin/publish_gem.sh
+      run: ruby ./bin/publish_gem.rb
