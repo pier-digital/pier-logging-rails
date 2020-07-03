@@ -20,8 +20,9 @@ Or install it yourself as:
 
 ## Usage
 
-Create an initializer at `config/initializers/pier_logging.rb` to configure the gem.
-Configure General-purpose logging, Request logging and register the request logger rails middleware.
+- Create an initializer at `config/initializers/pier_logging.rb` to configure the gem.
+- Configure General-purpose logging, Request logging and register the request logger rails middleware.
+- Configure your logger on `config/application.rb` to use `PierLogging::Logger`
 
 ### General-purpose logging
 
@@ -52,6 +53,8 @@ You have at your disposal the following helper methods:
 ### Example
 
 ```ruby
+# config/initializers/pier_logging.rb
+
 PierLogging.configure_logger do |config|
   config.app_name = Rails.application.class.module_parent_name.underscore.dasherize
   config.env = Rails.env
@@ -75,6 +78,13 @@ end
 Rails.application.config.middleware.use PierLogging::RequestLogger, PierLogging::Logger.new(STDOUT)
 ```
 
+```ruby
+# config/application.rb
+
+# ...
+config.logger = PierLogging::Logger.new(STDOUT)
+# ...
+```
 
 ## Contributing
 
