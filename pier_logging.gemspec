@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["mauricio.banduk@pier.digital"]
 
   spec.summary       = %q{Structured log used on Pier Applications}
-  spec.description   = %q{Defines a basic structure for logging}
+  spec.description   = %q{Defines a basic structure for general and request logging}
   spec.homepage      = "https://github.com/pier-digital"
   spec.license       = "MIT"
 
@@ -27,8 +27,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "awesome_print"
   spec.add_dependency "rails"
 
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "byebug"
+  spec.add_development_dependency "bundler", ">= 2.1.4"
+  spec.add_development_dependency "rake", ">= 12.3.3"
+  spec.add_development_dependency "minitest", ">= 5.8.4"
+  spec.add_development_dependency "byebug", ">= 11.1.3"
 end

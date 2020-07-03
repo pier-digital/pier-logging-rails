@@ -65,7 +65,7 @@ module PierLogging
       })
     rescue StandardError => error
       # We should never fall in this part as the only errors that could result in this are errors
-      # in our logger (inside this sabe method)
+      # in our logger (inside this same method)
       @logger.error(error.message)
     end
 
@@ -101,19 +101,20 @@ module PierLogging
     end
 
     def redact_hash(hash)
-      hash.traverse{ |k,v| 
-        should_redact = REDACT_REPLACE_KEYS.any?{ |regex| k =~regex };
+      hash.traverse do |k,v| 
+        should_redact = REDACT_REPLACE_KEYS.any?{ |regex| k =~regex }
         if (should_redact)
           [k, REDACT_REPLACE_BY]
         else
           [k, v]
         end
-      }
+      end
     end
 
     def determine_body_from_exception(exception)
       { message: exception.message }
     end
+
     def determine_type_from_exception(exception)
       'application/json'
     end
