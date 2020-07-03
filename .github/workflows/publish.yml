@@ -27,6 +27,7 @@ jobs:
       id: new_version
       run: echo "##[set-output name=version;]$(ruby ./bin/get_current_version.rb)"
     - name: Create tag
+      if: steps.filter.outputs.version == 'true'
       uses: tvdias/github-tagger@v0.0.1
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -49,3 +50,17 @@ jobs:
         VERSION: ${{ steps.new_version.outputs.version }}
         RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
       run: ruby ./bin/publish_gem.rb
+    - name: Notify deploy status to Slack
+      if: steps.filter.outputs.version == 'true'
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        STATUS: ${{ job.status }}
+        GH_MESSAGE: ${{ github.event.commits[0].message }}
+        GH_ACTOR: ${{ github.actor }}
+        GH_SHA: ${{ github.sha }}
+        GH_REPO: ${{ github.repository }}
+        APP_ENVIRONMENT: rubygems
+        SLACK_CHANNEL: CEBAD7R0F
+        LANGUAGE: "ruby" # "python", "nodejs" 
+        DEPLOY_TARGET: ${{ github.event.repository.name }}
+      run: /bin/bash ./bin/notify_slack_github.sh
