@@ -67,7 +67,7 @@ module PierLogging
       # We should never fall in this part as the only errors that could result in this are errors
       # in our logger (inside this same method)
       @logger.error(error.message)
-    end
+    end 
 
     private
     def get_request_headers_from_env(env)
@@ -125,20 +125,5 @@ module PierLogging
     rescue
       500
     end
-
-    def has_basic_credentials?(headers)
-      auth_header = headers['AUTHENTICATION'].to_s
-      return false if auth_header.blank?
-      # Optimization: https://github.com/JuanitoFatas/fast-ruby#stringcasecmp-vs-stringdowncase---code
-      return false if auth_header.split(' ', 2)[0].casecmp('basic') == 0
-      return false if auth_header.split(' ', 2)[1].blank?
-      return true
-    end
-
-    def get_basic_credentials_user(headers)
-      auth_headers = headers['AUTHENTICATION'].to_s
-      credentials = auth_headers.split(' ', 2)[1]
-      ::Base64.decode64(credentials).split(':', 2)[0]
-    end 
   end
 end
