@@ -23,6 +23,6 @@ jobs:
         ruby-version: 2.7.1
     - name: Publish Gem
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
         RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
       run: /bin/bash ./bin/publish_gem.sh
