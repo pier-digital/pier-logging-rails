@@ -22,9 +22,8 @@ jobs:
       with:
         ruby-version: 2.7.1
     - name: Publish Gem
+      # if: steps.filter.outputs.version == 'true'
       env:
-        GH_PERSONAL_ACCESS_TOKEN: GH_PERSONAL_ACCESS_TOKEN
-        RUBYGEMS_API_KEY: RUBYGEMS_API_KEY
-        # GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-        # RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+        RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
       run: /bin/bash ./bin/publish_gem.sh
