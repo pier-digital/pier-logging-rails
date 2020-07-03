@@ -1,8 +1,6 @@
 # PierLogging
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/pier_logging`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A gem developed by [PIER](https://www.pier.digital/) to standardize our logs (request and general-purpose)
 
 ## Installation
 
@@ -22,17 +20,65 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Create an initializer at `config/initializers/pier_logging.rb` to configure the gem.
+Configure General-purpose logging, Request logging and register the request logger rails middleware.
 
-## Development
+### General-purpose logging
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Use `PierLogging.configure_logger` block to configure general-purpose logs. Accepted configs are:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+| config    | Required | Type                      | Default                            |
+| --------- | --------:| -------------------------:| ----------------------------------:|
+| app_name  | true     | string                    | nil                                |
+| env       | true     | string                    | nil                                |
+| formatter | false    | `Ougai::Formatters::Base` | `PierLogging::Formatter::Json.new` |
+
+### Request logging
+
+Use `PierLogging.configure_request_logger` block to configure request logs. Accepted configs are:
+
+| config           | Required | Type            | Default    |
+| ---------------- | --------:| ---------------:| ----------:|
+| enabled          | false    | boolean         | false      |
+| user_info_getter | true     | block (headers) | nil        |
+
+The block passed to `user_info_getter` receives the headers of the request so you can use your headers to define the username or role. 
+
+You have at your disposal the following helper methods:
+
+- has_basic_credentials(headers): checks if there are basic auth credentials in the header
+- get_basic_credentials_user(headers): get the user from the basic auth credential
+
+### Example
+
+```ruby
+PierLogging.configure_logger do |config|
+  config.app_name = Rails.application.class.module_parent_name.underscore.dasherize
+  config.env = Rails.env
+  config.formatter = Rails.env.production? ? PierLogging::Formatter::Json.new : 
+    PierLogging::Formatter::Readable.new
+end 
+
+PierLogging.configure_request_logger do |config|
+  config.user_info_getter do |headers|
+    if headers['MY-USER-HEADER'].present?
+      { username: headers['MY-USER-HEADER']  }
+    elsif has_basic_credentials?(headers)
+      { username: get_basic_credentials_user(headers) }
+    else
+      { username: 'anonymous' }
+    end
+  end
+  config.enabled = ENV.fetch('REQUEST_LOG_ENABLED', 'true') == 'true'
+end
+
+Rails.application.config.middleware.use PierLogging::RequestLogger, PierLogging::Logger.new(STDOUT)
+```
+
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/pier_logging.
+Bug reports and pull requests are welcome on GitHub at https://github.com/pier-digital/pier_logging.
 
 ## License
 
