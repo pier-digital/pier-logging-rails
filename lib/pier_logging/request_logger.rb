@@ -87,16 +87,15 @@ module PierLogging
     end
 
     def parse_body(body)
-      if body.is_a? String # when string
-        Oj.load(body, allow_blank: true)
-      elsif body.is_a? Array # Grape body
-        Oj.load(body.last, allow_blank: true)
-      elsif body.is_a? ActionDispatch::Response::RackBody # Rails body
-        Oj.load(body.body, allow_blank: true)
-      else
-        body
-      end
+      body_object = get_body_object(body)
+      Oj.load(body_object, allow_blank: true)
     rescue
+      body_object || body
+    end
+
+    def get_body_object(body)
+      return body.last if body.is_a? Array # Grape body
+      return body.body if body.is_a? ActionDispatch::Response::RackBody # Rails body
       body
     end
 
