@@ -18,12 +18,12 @@ jobs:
           version:
             - 'lib/pier_logging/version.rb'
     - name: Setup Ruby
-      # if: steps.filter.outputs.version == 'true'
+      if: steps.filter.outputs.version == 'true'
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7.1
     - name: Get version
-      # if: steps.filter.outputs.version == 'true'
+      if: steps.filter.outputs.version == 'true'
       id: new_version
       run: echo "##[set-output name=version;]$(ruby ./bin/get_current_version.rb)"
     - name: Create tag
@@ -32,7 +32,7 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         tag: "${{ steps.new_version.outputs.version }}"
     - name: Create Release
-      # if: steps.filter.outputs.version == 'true'
+      if: steps.filter.outputs.version == 'true'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -44,7 +44,7 @@ jobs:
         draft: false
         prerelease: false
     - name: Publish Gem
-      # if: steps.filter.outputs.version == 'true'
+      if: steps.filter.outputs.version == 'true'
       env:
         VERSION: ${{ steps.new_version.outputs.version }}
         RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
