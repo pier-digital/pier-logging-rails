@@ -1,5 +1,7 @@
 require "rails"
 require "ougai"
+require "awesome_print"
+require "facets"
 require "pier_logging/version"
 require "pier_logging/logger"
 require "pier_logging/request_logger"
