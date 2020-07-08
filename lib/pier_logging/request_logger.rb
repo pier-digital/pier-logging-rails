@@ -71,8 +71,8 @@ module PierLogging
 
     private
     def get_request_headers_from_env(env)
-      env.select { |k,v| k.start_with? 'HTTP_'}.
-        transform_keys { |k| k.delete_prefix('HTTP_').split('_').join('-').upcase }
+      env.select { |k,v| k[0..5] == 'HTTP_'}.
+        transform_keys { |k| k[5..-1].split('_').join('-').upcase }
     end
 
     def build_message_from_request(request)
