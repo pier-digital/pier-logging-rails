@@ -50,7 +50,7 @@ module PierLogging
         duration: ((ends_at - starts_at)*1000).to_i,
         context: {
           user: get_user_info_from_headers(request_headers),
-          correlation_id: env['action_dispatch.request_id'],
+          correlation_id: request_headers['X-CORRELATION-ID'],
         },
         request: {
           headers: request_headers,
