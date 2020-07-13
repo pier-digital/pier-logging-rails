@@ -7,7 +7,7 @@ module PierLogging
       /^pw$/,
       /^pass$/i,
       /secret/i,
-      /token/i,
+      /.*token/i,
       /api[-._]?key/i,
       /session[-._]?id/i,
       /^connect\.sid$/
