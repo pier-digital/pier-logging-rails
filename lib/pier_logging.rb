@@ -54,13 +54,14 @@ module PierLogging
   end
 
   class RequestLoggerConfiguration
-    attr_reader :enabled, :user_info_getter, :hide_response_body_for_paths, :log_response
+    attr_reader :enabled, :user_info_getter, :hide_response_body_for_paths, :log_response, :hide_request_headers
 
     def initialize
       @user_info_getter = nil
       @enabled = false
       @hide_response_body_for_paths = nil
       @log_response = true
+      @hide_request_headers = nil
     end
 
     def user_info_getter=(proc)
@@ -79,6 +80,13 @@ module PierLogging
       end
       
       @hide_response_body_for_paths = hide_response_body_for_paths
+    end
+
+    def hide_request_headers=(hide_request_headers)
+      unless (hide_request_headers.is_a? Array) && (hide_request_headers.all?{|item| item.is_a? Regexp})
+        raise ArgumentError, "Config 'hide_request_headers' must be an 'Array of Regexps'" 
+      end
+      @hide_request_headers = hide_request_headers
     end
     
     def enabled=(enabled = false)
