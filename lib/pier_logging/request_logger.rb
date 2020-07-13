@@ -59,7 +59,7 @@ module PierLogging
         },
         response: {
           status: status,
-          body: parse_body(body),
+          body: response_body(request.path, body),
           type: type['Content-Type'],
         }
       })
@@ -73,6 +73,15 @@ module PierLogging
     def get_request_headers_from_env(env)
       env.select { |k,v| k[0..4] == 'HTTP_'}.
         transform_keys { |k| k[5..-1].split('_').join('-').upcase }
+    end
+
+    def response_body(request_path, body)
+      return nil unless PierLogging.request_logger_configuration.log_response
+      
+      hide_response_body_for_paths = PierLogging.request_logger_configuration.hide_response_body_for_paths
+      return nil if hide_response_body_for_paths && hide_response_body_for_paths.any?{ |path|request_path =~ path }
+      
+      parse_body(body)
     end
 
     def build_message_from_request(request)
