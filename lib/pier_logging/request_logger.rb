@@ -71,8 +71,14 @@ module PierLogging
 
     private
     def get_request_headers_from_env(env)
-      env.select { |k,v| k[0..4] == 'HTTP_'}.
+      hide_request_headers = PierLogging.request_logger_configuration.hide_request_headers
+      
+      headers = env.select { |k,v| k[0..4] == 'HTTP_'}.
         transform_keys { |k| k[5..-1].split('_').join('-').upcase }
+      
+      return redact_hash(headers, hide_request_headers, nil) if hide_request_headers.present?
+
+      headers
     end
 
     def response_body(request_path, body)
@@ -108,11 +114,11 @@ module PierLogging
       body
     end
 
-    def redact_hash(hash)
+    def redact_hash(hash, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
       hash.traverse do |k,v| 
-        should_redact = REDACT_REPLACE_KEYS.any?{ |regex| k =~regex }
+        should_redact = replace_keys.any?{ |regex| k =~regex }
         if (should_redact)
-          [k, REDACT_REPLACE_BY]
+          [k, replace_by]
         else
           [k, v]
         end
