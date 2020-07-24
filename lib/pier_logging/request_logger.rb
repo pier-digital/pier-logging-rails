@@ -50,7 +50,8 @@ module PierLogging
         duration: ((ends_at - starts_at)*1000).to_i,
         context: {
           user: get_user_info_from_headers(request_headers),
-          correlation_id: request_headers['X-CORRELATION-ID'],
+          request_id: env['action_dispatch.request_id'],
+          correlation_id: get_correlation_id(env, headers)
         },
         request: {
           headers: request_headers,
@@ -99,6 +100,10 @@ module PierLogging
 
     def get_user_info_from_headers(headers)
       PierLogging.request_logger_configuration.user_info_getter.call(headers)
+    end
+
+    def get_correlation_id(env, headers)
+      PierLogging.request_logger_configuration.correlation_id_getter(env, headers) || headers['X-CORRELATION-ID']
     end
 
     def parse_body(body)

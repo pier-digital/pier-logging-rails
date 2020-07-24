@@ -54,14 +54,16 @@ module PierLogging
   end
 
   class RequestLoggerConfiguration
-    attr_reader :enabled, :user_info_getter, :hide_response_body_for_paths, :log_response, :hide_request_headers
+    attr_reader :enabled, :user_info_getter, :hide_response_body_for_paths, 
+                :log_response, :hide_request_headers, :correlation_id_getter
 
     def initialize
-      @user_info_getter = nil
+      @user_info_getter = ->(_ = nil) { nil }
       @enabled = false
       @hide_response_body_for_paths = nil
       @log_response = true
       @hide_request_headers = nil
+      @correlation_id_getter = ->(_ = nil, _ = nil) { nil }
     end
 
     def user_info_getter=(proc)
@@ -92,6 +94,11 @@ module PierLogging
     def enabled=(enabled = false)
       raise ArgumentError, "Config 'enabled' must be a 'boolean'" unless !!enabled == enabled
       @enabled = enabled
+    end
+
+    def correlation_id_getter=(proc)
+      raise ArgumentError, "Config 'correlation_id_getter' must be a 'Proc'" unless proc.is_a? Proc
+      @correlation_id_getter = proc
     end
   end
 end
