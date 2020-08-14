@@ -51,7 +51,7 @@ module PierLogging
         context: {
           user: get_user_info_from_headers(request_headers),
           request_id: env['action_dispatch.request_id'],
-          correlation_id: get_correlation_id(env, headers)
+          correlation_id: get_correlation_id(env, request_headers)
         },
         request: {
           headers: request_headers,
