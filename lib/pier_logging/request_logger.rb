@@ -103,7 +103,7 @@ module PierLogging
     end
 
     def get_correlation_id(env, headers)
-      PierLogging.request_logger_configuration.correlation_id_getter(env, headers) || headers['X-CORRELATION-ID']
+      PierLogging.request_logger_configuration.correlation_id_getter.call(env, headers) || headers['X-CORRELATION-ID']
     end
 
     def parse_body(body)
