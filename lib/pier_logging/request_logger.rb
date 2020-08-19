@@ -56,7 +56,7 @@ module PierLogging
         request: {
           headers: request_headers,
           href: request.url,
-          body: parse_body(request.POST)
+          body: parse_body(request.body)
         },
         response: {
           status: status,
