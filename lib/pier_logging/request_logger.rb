@@ -44,7 +44,7 @@ module PierLogging
       env, status, type, body, starts_at, ends_at, _ = args
       request = Rack::Request.new(env)
       request_headers = get_request_headers_from_env(env)
-      logger.info redact_hash({
+      logger.info redact_object({
         message: build_message_from_request(request),
         type: 'http',
         duration: ((ends_at - starts_at)*1000).to_i,
@@ -78,7 +78,7 @@ module PierLogging
       headers = env.select { |k,v| k[0..4] == 'HTTP_'}.
         transform_keys { |k| k[5..-1].split('_').join('-').upcase }
       
-      return redact_hash(headers, hide_request_headers, nil) if hide_request_headers.present?
+      return redact_object(headers, hide_request_headers, nil) if hide_request_headers.present?
 
       headers
     end
@@ -120,13 +120,35 @@ module PierLogging
       body
     end
 
+    def redact_object(obj, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
+      if obj === Array
+        redact_array(obj, replace_keys, replace_by)
+      elsif obj === Hash
+        redact_hash(obj, replace_keys, replace_by)
+      elsif obj.respond_to?(:to_hash)
+        redact_hash(obj.to_hash, replace_keys, replace_by)
+      else
+        obj
+      end
+    end
+    
+    def redact_array(arr, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
+      raise StandardError, 'Could not redact_array for non-array objects' unless arr.is_a? Array
+      arr.map { |el| redact_object(el, replace_keys, replace_by) }
+    end
+    
     def redact_hash(hash, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
-      hash.traverse do |k,v| 
+      raise StandardError, 'Could not redact_hash for non-hash objects' unless hash.is_a? Hash
+      hash.traverse do |k,v|
         should_redact = replace_keys.any?{ |regex| k =~regex }
         if (should_redact)
           [k, replace_by]
         else
-          [k, v]
+          case v
+          when Array then [k, redact_array(v, replace_keys, replace_by)]
+          else 
+            [k, v]
+          end
         end
       end
     end
