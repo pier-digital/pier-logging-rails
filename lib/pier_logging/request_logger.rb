@@ -121,9 +121,12 @@ module PierLogging
     end
 
     def redact_object(obj, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
-      case obj
-      when Array then redact_array(obj, replace_keys, replace_by)
-      when Hash then redact_hash(obj, replace_keys, replace_by)
+      if obj === Array
+        redact_array(obj, replace_keys, replace_by)
+      elsif obj === Hash
+        redact_hash(obj, replace_keys, replace_by)
+      elsif obj.respond_to?(:to_hash)
+        redact_hash(obj.to_hash, replace_keys, replace_by)
       else
         obj
       end
