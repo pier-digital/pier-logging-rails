@@ -2,7 +2,7 @@
 module PierLogging
   class Logger < Ougai::Logger
     include ActiveSupport::LoggerThreadSafeLevel
-    include LoggerSilence
+    include ActiveSupport::LoggerSilence if defined?(ActiveSupport::LoggerSilence)
 
     def initialize(*args)
       super
