@@ -57,7 +57,7 @@ module PierLogging
           headers: request_headers,
           href: request.url,
           query_string: request.query_string,
-          body: request_body(request.path, request.body)
+          body: parse_body(request.body)
         },
         response: {
           status: status,
@@ -83,20 +83,11 @@ module PierLogging
       headers
     end
 
-    def request_body(request_path, body)
-      return nil unless PierLogging.request_logger_configuration.log_request_body
-
-      hide_request_body_for_paths = PierLogging.request_logger_configuration.hide_request_body_for_paths
-      return nil if hide_request_body_for_paths&.any?{ |path|request_path =~ path }
-
-      parse_body(body)
-    end
-    
     def response_body(request_path, body)
       return nil unless PierLogging.request_logger_configuration.log_response
       
       hide_response_body_for_paths = PierLogging.request_logger_configuration.hide_response_body_for_paths
-      return nil if hide_response_body_for_paths&.any?{ |path|request_path =~ path }
+      return nil if hide_response_body_for_paths && hide_response_body_for_paths.any?{ |path|request_path =~ path }
       
       parse_body(body)
     end

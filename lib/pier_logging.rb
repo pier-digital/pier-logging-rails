@@ -54,15 +54,13 @@ module PierLogging
   end
 
   class RequestLoggerConfiguration
-    attr_reader :enabled, :user_info_getter, :hide_request_body_for_paths, :hide_response_body_for_paths, 
-                :log_request_body, :log_response, :hide_request_headers, :correlation_id_getter
+    attr_reader :enabled, :user_info_getter, :hide_response_body_for_paths, 
+                :log_response, :hide_request_headers, :correlation_id_getter
 
     def initialize
       @user_info_getter = ->(_ = nil) { nil }
       @enabled = false
-      @hide_request_body_for_paths = nil
       @hide_response_body_for_paths = nil
-      @log_request_body = true
       @log_response = true
       @hide_request_headers = nil
       @correlation_id_getter = ->(_ = nil, _ = nil) { nil }
@@ -73,22 +71,9 @@ module PierLogging
       @user_info_getter = proc
     end
 
-    def log_request_body=(log_request_body)
-      raise ArgumentError, "Config 'log_request_body' must be a 'boolean'" unless !!log_request_body == log_request_body
-      @log_request_body = log_request_body
-    end
-
     def log_response=(log_response)
       raise ArgumentError, "Config 'log_response' must be a 'boolean'" unless !!log_response == log_response
       @log_response = log_response
-    end
-
-    def hide_request_body_for_paths=(hide_request_body_for_paths)
-      unless (hide_request_body_for_paths.is_a? Array) && (hide_request_body_for_paths.all?{|item| item.is_a? Regexp})
-        raise ArgumentError, "Config 'hide_request_body_for_paths' must be an 'Array of Regexps'" 
-      end
-      
-      @hide_request_body_for_paths = hide_request_body_for_paths
     end
 
     def hide_response_body_for_paths=(hide_response_body_for_paths)
