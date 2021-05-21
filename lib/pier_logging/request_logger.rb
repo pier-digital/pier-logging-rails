@@ -129,7 +129,11 @@ module PierLogging
       body
     end
 
-    def redact_object(obj, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
+    def replace_keys
+      REDACT_REPLACE_KEYS + PierLogging.request_logger_configuration.sensitive_keywords
+    end
+
+    def redact_object(obj, replace_by = REDACT_REPLACE_BY)
       if obj === Array
         redact_array(obj, replace_keys, replace_by)
       elsif obj === Hash
@@ -141,15 +145,15 @@ module PierLogging
       end
     end
     
-    def redact_array(arr, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
+    def redact_array(arr, replace_by = REDACT_REPLACE_BY)
       raise StandardError, 'Could not redact_array for non-array objects' unless arr.is_a? Array
       arr.map { |el| redact_object(el, replace_keys, replace_by) }
     end
     
-    def redact_hash(hash, replace_keys = REDACT_REPLACE_KEYS, replace_by = REDACT_REPLACE_BY)
+    def redact_hash(hash, replace_by = REDACT_REPLACE_BY)
       raise StandardError, 'Could not redact_hash for non-hash objects' unless hash.is_a? Hash
       hash.traverse do |k,v|
-        should_redact = replace_keys.any?{ |regex| k =~regex }
+        should_redact = replace_keys.any?{ |regex| k =~ regex }
         if (should_redact)
           [k, replace_by]
         else
