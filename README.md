@@ -42,6 +42,7 @@ Use `PierLogging.configure_request_logger` block to configure request logs. Acce
 | ---------------- | --------:| ---------------:| ----------:|
 | enabled          | false    | boolean         | false      |
 | user_info_getter | true     | block (headers) | nil        |
+| sensitive_keywords | false | array of symbols, strings or regexps | `REDACT_REPLACE_KEYS` in request_logger.rb
 
 The block passed to `user_info_getter` receives the headers of the request so you can use your headers to define the username or role. 
 

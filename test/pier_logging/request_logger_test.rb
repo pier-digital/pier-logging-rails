@@ -13,7 +13,7 @@ class PierLogging::RequestLoggerTest < Minitest::Test
     subject { PierLogging::RequestLogger.new mock(), @logger }
 
     should 'redact blah' do
-      args = [:test, 'foo', 'foo', {blah: 'foo'}, Time.now, Time.now]
+      args = [:test, 'foo', 'foo', {blah: 'foo', bluh: 'plaft'}, Time.now, Time.now]
       subject.log args
     end
   end
