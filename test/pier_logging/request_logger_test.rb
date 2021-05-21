@@ -1,5 +1,5 @@
 require "test_helper"
 
-class RequestLoggerTest < Minitest::Test
-    
+class PierLogging::RequestLoggerTest < Minitest::Test
+  subject { PierLogging::RequestLogger.new }
 end
