@@ -7,5 +7,4 @@
 /spec/reports/
 /tmp/
 *.gem
-.github*
 .byebug_history
