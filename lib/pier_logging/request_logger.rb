@@ -13,7 +13,7 @@ module PierLogging
       /^connect\.sid$/
     ].freeze
     REDACT_REPLACE_BY = '*'.freeze
-    
+
     attr_reader :logger
 
     def initialize(app, logger = PierLogging::Logger.new(STDOUT))
@@ -69,15 +69,15 @@ module PierLogging
       # We should never fall in this part as the only errors that could result in this are errors
       # in our logger (inside this same method)
       @logger.error(error.message)
-    end 
+    end
 
     private
     def get_request_headers_from_env(env)
       hide_request_headers = PierLogging.request_logger_configuration.hide_request_headers
-      
+
       headers = env.select { |k,v| k[0..4] == 'HTTP_'}.
         transform_keys { |k| k[5..-1].split('_').join('-').upcase }
-      
+
       return redact_object(headers, hide_request_headers, nil) if hide_request_headers.present?
 
       headers
@@ -91,19 +91,19 @@ module PierLogging
 
       parse_body(body)
     end
-    
+
     def response_body(request_path, body)
       return nil unless PierLogging.request_logger_configuration.log_response
-      
+
       hide_response_body_for_paths = PierLogging.request_logger_configuration.hide_response_body_for_paths
       return nil if hide_response_body_for_paths&.any?{ |path|request_path =~ path }
-      
+
       parse_body(body)
     end
 
     def build_message_from_request(request)
       [
-        request.request_method.upcase, 
+        request.request_method.upcase,
         [request.base_url,request.path].join(''),
       ].join(' ')
     end
@@ -135,21 +135,21 @@ module PierLogging
 
     def redact_object(obj, replace_by = REDACT_REPLACE_BY)
       if obj === Array
-        redact_array(obj, replace_keys, replace_by)
+        redact_array(obj, replace_by)
       elsif obj === Hash
-        redact_hash(obj, replace_keys, replace_by)
+        redact_hash(obj, replace_by)
       elsif obj.respond_to?(:to_hash)
-        redact_hash(obj.to_hash, replace_keys, replace_by)
+        redact_hash(obj.to_hash, replace_by)
       else
         obj
       end
     end
-    
+
     def redact_array(arr, replace_by = REDACT_REPLACE_BY)
       raise StandardError, 'Could not redact_array for non-array objects' unless arr.is_a? Array
       arr.map { |el| redact_object(el, replace_keys, replace_by) }
     end
-    
+
     def redact_hash(hash, replace_by = REDACT_REPLACE_BY)
       raise StandardError, 'Could not redact_hash for non-hash objects' unless hash.is_a? Hash
       hash.traverse do |k,v|
@@ -159,7 +159,7 @@ module PierLogging
         else
           case v
           when Array then [k, redact_array(v, replace_keys, replace_by)]
-          else 
+          else
             [k, v]
           end
         end
