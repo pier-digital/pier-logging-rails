@@ -12,5 +12,16 @@ module PierLogging
     def create_formatter
       PierLogging.logger_configuration.formatter
     end
+
+    def log(severity, message, ex, data, block)
+      new_data = redact_data(data)
+      super(severity, message, ex, new_data, block)
+    end
+
+    private
+
+    def redact_data(data)
+      PierLogging::Helpers::Redactor.redact data
+    end
   end
 end

@@ -10,6 +10,7 @@ require "pier_logging/formatter/json"
 require "pier_logging/formatter/readable"
 require "pier_logging/helpers/headers"
 require "pier_logging/helpers/env_config"
+require "pier_logging/helpers/redactor"
 
 module PierLogging
   def self.logger_configuration

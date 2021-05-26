@@ -2,18 +2,6 @@
 require 'facets/hash/traverse'
 module PierLogging
   class RequestLogger
-    REDACT_REPLACE_KEYS = [
-      /passw(or)?d/i,
-      /^pw$/,
-      /^pass$/i,
-      /secret/i,
-      /token/i,
-      /api[-._]?key/i,
-      /session[-._]?id/i,
-      /^connect\.sid$/
-    ].freeze
-    REDACT_REPLACE_BY = '*'.freeze
-
     attr_reader :logger
 
     def initialize(app, logger = PierLogging::Logger.new(STDOUT))
@@ -44,7 +32,7 @@ module PierLogging
       env, status, type, body, starts_at, ends_at, _ = args
       request = Rack::Request.new(env)
       request_headers = get_request_headers_from_env(env)
-      logger.info redact_object({
+      logger.info PierLogging::Helpers::Redactor.redact({
         message: build_message_from_request(request),
         type: 'http',
         duration: ((ends_at - starts_at)*1000).to_i,
@@ -78,7 +66,7 @@ module PierLogging
       headers = env.select { |k,v| k[0..4] == 'HTTP_'}.
         transform_keys { |k| k[5..-1].split('_').join('-').upcase }
 
-      return redact_object(headers, hide_request_headers, nil) if hide_request_headers.present?
+      return PierLogging::Helpers::Redactor.redact(headers, hide_request_headers, nil) if hide_request_headers.present?
 
       headers
     end
@@ -127,44 +115,6 @@ module PierLogging
       return body.last if body.is_a? Array # Grape body
       return body.body if body.is_a? ActionDispatch::Response::RackBody # Rails body
       body
-    end
-
-    def sensitive_keywords
-      REDACT_REPLACE_KEYS + PierLogging.request_logger_configuration.sensitive_keywords
-    end
-
-    def redact_object(obj, replace_keys = nil, replace_by = REDACT_REPLACE_BY)
-      replace_keys ||= sensitive_keywords
-      if obj === Array
-        redact_array(obj, replace_keys, replace_by)
-      elsif obj === Hash
-        redact_hash(obj, replace_keys, replace_by)
-      elsif obj.respond_to?(:to_hash)
-        redact_hash(obj.to_hash, replace_keys, replace_by)
-      else
-        obj
-      end
-    end
-
-    def redact_array(arr, replace_keys, replace_by = REDACT_REPLACE_BY)
-      raise StandardError, 'Could not redact_array for non-array objects' unless arr.is_a? Array
-      arr.map { |el| redact_object(el, replace_keys, replace_by) }
-    end
-
-    def redact_hash(hash, replace_keys, replace_by = REDACT_REPLACE_BY)
-      raise StandardError, 'Could not redact_hash for non-hash objects' unless hash.is_a? Hash
-      hash.traverse do |k,v|
-        should_redact = replace_keys.any?{ |regex| k =~ regex }
-        if (should_redact)
-          [k, replace_by]
-        else
-          case v
-          when Array then [k, redact_array(v, replace_keys, replace_by)]
-          else
-            [k, v]
-          end
-        end
-      end
     end
 
     def determine_body_from_exception(exception)
