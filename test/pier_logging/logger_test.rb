@@ -9,26 +9,42 @@ class PierLogging::LoggerTest < Minitest::Test
       @message = "User logged in"
       @ex = StandardError.new("Repimboca da parafuseta")
       @data = {
-        user: "brunodamassa",
+        username: "brunodamassa",
         password: "Gruyere"
       }
     end
 
     context "logging message and data" do
       should "log stuff with redacted data" do
-        subject.log(@severity, @message, @data)
+        out, _ = capture_io do
+          subject.log(@severity, @message, @data)
+        end
+        log = JSON.parse(out)
+        assert_equal "*", log["fields"]["password"]
+        assert_equal "brunodamassa", log["fields"]["username"]
       end
     end
 
     context "loggin only data" do
       should "log stuff with redacted data" do
-        subject.log(@severity, @data)
+        out, _ = capture_io do
+          subject.log(@severity, @data)
+        end
+        log = JSON.parse(out)
+        assert_equal "*", log["fields"]["password"]
+        assert_equal "brunodamassa", log["fields"]["username"]
       end
     end
 
     context "logging an exception" do
       should "log correctly" do
-        subject.log(@severity, @ex)
+        out, _ = capture_io do
+          subject.log(@severity, @ex)
+        end
+        log = JSON.parse(out)
+        assert_equal "Repimboca da parafuseta", log["message"]
+        assert_equal "StandardError", log["fields"]["err"]["name"]
+        assert_equal "Repimboca da parafuseta", log["fields"]["err"]["message"]
       end
     end
   end
