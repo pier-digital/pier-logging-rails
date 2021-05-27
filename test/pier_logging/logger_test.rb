@@ -3,11 +3,10 @@ require "test_helper"
 class PierLogging::LoggerTest < Minitest::Test
   subject { PierLogging::Logger.new($stdout) }
 
-  context "#log" do
+  context "#_log" do
     setup do
-      @severity = Ougai::Logger::INFO
       @message = "User logged in"
-      @ex = StandardError.new("Repimboca da parafuseta")
+      @ex = StandardError.new("Rebimboca da parafuseta")
       @data = {
         username: "brunodamassa",
         password: "Gruyere"
@@ -16,7 +15,7 @@ class PierLogging::LoggerTest < Minitest::Test
 
     context "logging message and data" do
       should "log stuff with redacted data" do
-        log = capture_log { subject.log(@severity, @message, @data) }
+        log = capture_log { subject.debug(@message, @data) }
 
         assert_equal "*", log["fields"]["password"]
         assert_equal "brunodamassa", log["fields"]["username"]
@@ -25,7 +24,7 @@ class PierLogging::LoggerTest < Minitest::Test
 
     context "loggin only data" do
       should "log stuff with redacted data" do
-        log = capture_log { subject.log(@severity, @data) }
+        log = capture_log { subject.warn(@data) }
 
         assert_equal "*", log["fields"]["password"]
         assert_equal "brunodamassa", log["fields"]["username"]
@@ -34,11 +33,11 @@ class PierLogging::LoggerTest < Minitest::Test
 
     context "logging an exception" do
       should "log correctly" do
-        log = capture_log { subject.log(@severity, @ex) }
+        log = capture_log { subject.info(@ex) }
 
-        assert_equal "Repimboca da parafuseta", log["message"]
+        assert_equal "Rebimboca da parafuseta", log["message"]
         assert_equal "StandardError", log["fields"]["err"]["name"]
-        assert_equal "Repimboca da parafuseta", log["fields"]["err"]["message"]
+        assert_equal "Rebimboca da parafuseta", log["fields"]["err"]["message"]
       end
     end
   end
