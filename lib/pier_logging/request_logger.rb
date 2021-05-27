@@ -1,5 +1,3 @@
-# Requiring only the part that we need
-require 'facets/hash/traverse'
 module PierLogging
   class RequestLogger
     attr_reader :logger
