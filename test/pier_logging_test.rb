@@ -5,7 +5,4 @@ class PierLoggingTest < Minitest::Test
     refute_nil ::PierLogging::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
-  end
 end
