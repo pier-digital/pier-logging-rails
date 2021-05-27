@@ -33,7 +33,7 @@ module PierLogging
         private
 
         def sensitive_keywords
-            REDACT_REPLACE_KEYS + PierLogging.request_logger_configuration.sensitive_keywords
+            REDACT_REPLACE_KEYS + PierLogging.logger_configuration.sensitive_keywords
         end
 
         def redact_array(arr, replace_keys, replace_by = REDACT_REPLACE_BY)

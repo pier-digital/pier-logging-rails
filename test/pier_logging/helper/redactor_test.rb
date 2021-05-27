@@ -5,7 +5,7 @@ class PierLogging::Helpers::RedactorTest < Minitest::Test
 
   context ".redact" do
     setup do
-      PierLogging.request_logger_configuration.sensitive_keywords = [:sensitive_key]
+      PierLogging.logger_configuration.sensitive_keywords = [:sensitive_key]
     end
     context "with a hash" do
       setup do
