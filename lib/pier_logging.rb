@@ -1,6 +1,6 @@
 require "rails"
 require "ougai"
-require "awesome_print"
+require "amazing_print"
 require "facets/hash/traverse"
 require "pier_logging/version"
 require "pier_logging/logger"
