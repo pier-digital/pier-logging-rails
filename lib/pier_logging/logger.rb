@@ -13,9 +13,11 @@ module PierLogging
       PierLogging.logger_configuration.formatter
     end
 
-    def log(severity, message, ex, data, block)
+    def log(severity, message = nil, ex = nil, data = nil, &block)
+      redacted_message = redact_data(message)
+      redacted_ex = redact_data(ex)
       redacted_data = redact_data(data)
-      super(severity, message, ex, redacted_data, block)
+      super(severity, redacted_message, redacted_ex, redacted_data, &block)
     end
 
     private
