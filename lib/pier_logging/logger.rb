@@ -14,14 +14,14 @@ module PierLogging
     end
 
     def log(severity, message, ex, data, block)
-      new_data = redact_data(data)
-      super(severity, message, ex, new_data, block)
+      redacted_data = redact_data(data)
+      super(severity, message, ex, redacted_data, block)
     end
 
     private
 
     def redact_data(data)
-      PierLogging::Helpers::Redactor.redact data
+      PierLogging::Helpers::Redactor.redact(data)
     end
   end
 end
