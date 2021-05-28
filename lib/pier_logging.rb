@@ -79,6 +79,7 @@ module PierLogging
       @log_response = true
       @hide_request_headers = nil
       @correlation_id_getter = ->(_ = nil, _ = nil) { nil }
+      @sensitive_keywords = []
     end
 
     def user_info_getter=(proc)
@@ -127,6 +128,17 @@ module PierLogging
     def correlation_id_getter=(proc)
       raise ArgumentError, "Config 'correlation_id_getter' must be a 'Proc'" unless proc.is_a? Proc
       @correlation_id_getter = proc
+    end
+
+    def sensitive_keywords=(keywords)
+      keywords.map! do |kw|
+        if kw.is_a? Regexp
+          kw
+        else
+          Regexp.new(kw.to_s)
+        end
+      end
+      @sensitive_keywords += keywords
     end
   end
 end
