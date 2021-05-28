@@ -30,7 +30,7 @@ module PierLogging
       env, status, type, body, starts_at, ends_at, _ = args
       request = Rack::Request.new(env)
       request_headers = get_request_headers_from_env(env)
-      logger.info PierLogging::Helpers::Redactor.redact({
+      info = {
         message: build_message_from_request(request),
         type: 'http',
         duration: ((ends_at - starts_at)*1000).to_i,
@@ -50,7 +50,8 @@ module PierLogging
           body: response_body(request.path, body),
           type: type['Content-Type'],
         }
-      })
+      }
+      logger.info info
     rescue StandardError => error
       # We should never fall in this part as the only errors that could result in this are errors
       # in our logger (inside this same method)
