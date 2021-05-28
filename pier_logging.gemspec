@@ -6,8 +6,8 @@ require "pier_logging/version"
 Gem::Specification.new do |spec|
   spec.name          = "pier_logging"
   spec.version       = PierLogging::VERSION
-  spec.authors       = ["Mauricio Banduk"]
-  spec.email         = ["mauricio.banduk@pier.digital"]
+  spec.authors       = ["Mauricio Banduk", "Bruno Arakaki", "Leonardo Bighetti", "Tiago Macedo"]
+  spec.email         = ["mauricio.banduk@pier.digital", "bruno.arakaki@pier.digital", "leonardo.bighetti@pier.digital", "tiago.macedo@pier.digital"]
 
   spec.summary       = %q{Structured log used on Pier Applications}
   spec.description   = %q{Defines a basic structure for general and request logging}
