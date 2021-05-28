@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pier_logging (0.3.3)
+    pier_logging (0.4.0)
       amazing_print
       facets
       ougai (>= 2.0.0)
