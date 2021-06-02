@@ -5,7 +5,7 @@ class PierLogging::RequestLoggerTest < Minitest::Test
 
   context "#log" do
     setup do
-      PierLogging.request_logger_configuration.sensitive_keywords = [:blah]
+      PierLogging.logger_configuration.sensitive_keywords = [:blah]
       PierLogging.request_logger_configuration.enabled = true
       @logger = PierLogging::Logger.new($stdout)
       @env_mock = Rack::MockRequest.env_for

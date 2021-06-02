@@ -1,6 +1,6 @@
 require "rails"
 require "ougai"
-require "awesome_print"
+require "amazing_print"
 require "facets/hash/traverse"
 require "pier_logging/version"
 require "pier_logging/logger"
@@ -10,6 +10,7 @@ require "pier_logging/formatter/json"
 require "pier_logging/formatter/readable"
 require "pier_logging/helpers/headers"
 require "pier_logging/helpers/env_config"
+require "pier_logging/helpers/redactor"
 
 module PierLogging
   def self.logger_configuration
@@ -29,12 +30,13 @@ module PierLogging
   end
 
   class LoggerConfiguration
-    attr_reader :app_name, :env, :formatter
+    attr_reader :app_name, :env, :formatter, :sensitive_keywords
 
     def initialize
       @app_name = nil
       @env = nil
       @formatter = Formatter::Json.new
+      @sensitive_keywords = []
     end
 
     def app_name=(app_name)
@@ -51,11 +53,22 @@ module PierLogging
       raise ArgumentError, "Config 'formatter' must be a 'Ougai::Formatters::Base'" unless formatter.is_a?(Ougai::Formatters::Base)
       @formatter = formatter
     end
+
+    def sensitive_keywords=(keywords)
+      keywords.map! do |kw|
+        if kw.is_a? Regexp
+          kw
+        else
+          Regexp.new(kw.to_s)
+        end
+      end
+      @sensitive_keywords += keywords
+    end
   end
 
   class RequestLoggerConfiguration
     attr_reader :enabled, :user_info_getter, :hide_request_body_for_paths, :hide_response_body_for_paths,
-                :log_request_body, :log_response, :hide_request_headers, :correlation_id_getter, :sensitive_keywords
+                :log_request_body, :log_response, :hide_request_headers, :correlation_id_getter
 
     def initialize
       @user_info_getter = ->(_ = nil) { nil }

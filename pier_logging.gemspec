@@ -6,8 +6,8 @@ require "pier_logging/version"
 Gem::Specification.new do |spec|
   spec.name          = "pier_logging"
   spec.version       = PierLogging::VERSION
-  spec.authors       = ["Mauricio Banduk"]
-  spec.email         = ["mauricio.banduk@pier.digital"]
+  spec.authors       = ["Mauricio Banduk", "Bruno Arakaki", "Leonardo Bighetti", "Tiago Macedo"]
+  spec.email         = ["mauricio.banduk@pier.digital", "bruno.arakaki@pier.digital", "leonardo.bighetti@pier.digital", "tiago.macedo@pier.digital"]
 
   spec.summary       = %q{Structured log used on Pier Applications}
   spec.description   = %q{Defines a basic structure for general and request logging}
@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "ougai"
-  spec.add_dependency "awesome_print"
+  spec.add_dependency "ougai", ">=2.0.0"
+  spec.add_dependency "amazing_print"
   spec.add_dependency "rails"
   spec.add_dependency "facets"
 

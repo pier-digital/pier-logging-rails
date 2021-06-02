@@ -1,7 +1,7 @@
 require "test_helper"
 
-class PierLogging::RequestLoggerConfigurationTest < Minitest::Test
-  subject { PierLogging::RequestLoggerConfiguration.new }
+class PierLogging::LoggerConfigurationTest < Minitest::Test
+  subject { PierLogging::LoggerConfiguration.new }
 
   context "#sensitive_keywords" do
     should 'transform strings to regexps when adding them' do
