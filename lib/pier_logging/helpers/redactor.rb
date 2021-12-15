@@ -12,7 +12,8 @@ module PierLogging
         /token/i,
         /api[-._]?key/i,
         /session[-._]?id/i,
-        /^connect\.sid$/
+        /^connect\.sid$/,
+        /authorization/i
       ].freeze
       REDACT_REPLACE_BY = '*'.freeze
 
